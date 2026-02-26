@@ -106,14 +106,19 @@ function renderCart() {
     cartItemsContainer.innerHTML = cart.map(item => {
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
-        // Fix: Removed hardcoded styles to let style.css handle it
-        // Added the '&times;' (X symbol) for a modern remove button
         return `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
                     <h4>${item.name}</h4>
-                    <p>Size: ${item.size} | Qty: ${item.quantity}</p>
+                    <p class="item-specs">Size: ${item.size}</p>
+                    
+                    <div class="qty-controls">
+                        <button onclick="updateQuantity('${item.cartId}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateQuantity('${item.cartId}', 1)">+</button>
+                    </div>
+                    
                     <p class="cart-item-price">$${itemTotal.toFixed(2)}</p>
                 </div>
                 <button class="remove-item" onclick="removeFromCart('${item.cartId}')">&times;</button>
@@ -189,6 +194,24 @@ function openCartFromMenu() {
     setTimeout(() => {
         toggleCart(); // Open the cart sidebar
     }, 300); // Small delay for a smoother transition
+}
+
+
+
+function updateQuantity(cartId, change) {
+    const item = cart.find(item => item.cartId === cartId);
+    if (item) {
+        item.quantity += change;
+
+        // If quantity goes below 1, remove the item entirely
+        if (item.quantity <= 0) {
+            removeFromCart(cartId);
+        } else {
+            saveCart();
+            updateNavCount();
+            renderCart();
+        }
+    }
 }
 
 // --- Initialize ---
