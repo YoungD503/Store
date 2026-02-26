@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story | YOUNG DESERT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav>
+    <div class="logo"><a href="index.html">YOUNG DESERT</a></div>
+    
+    <div class="nav-right">
+        <ul class="desktop-links">
+            <li><a href="index.html#shop">Shop</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="javascript:void(0)" class="desktop-cart-link" onclick="toggleCart()">Cart (<span class="cart-count-val">0</span>)</a></li>
+        </ul>
+
+        <a href="javascript:void(0)" class="menu-btn" onclick="toggleMenu()">Menu</a>
+    </div>
+</nav>
+
+<div id="mobile-menu" class="mobile-menu-overlay">
+    <span class="close-menu" onclick="toggleMenu()">&times;</span>
+    <ul class="mobile-nav-links">
+        <li><a href="index.html#shop" onclick="toggleMenu()">Shop</a></li>
+        <li><a href="story.html" onclick="toggleMenu()">Our Story</a></li>
+        <li>
+            <a href="javascript:void(0)" onclick="openCartFromMenu()">
+                Cart (<span class="cart-count-val">0</span>)
+            </a>
+        </li>
+    </ul>
+</div>
+
+    <main class="story-container">
+        <div class="story-header-side">
+            <span class="brand-subtext">Est. 2024</span>
+            <h1 class="story-title">Woven with<br>Purpose</h1>
+        </div>
+
+        <div class="story-body-side">
+            <section class="story-block">
+                <p class="emphasized-text">Verse & Thread started with a simple idea: that the clothes we wear should reflect the truths we carry.</p>
+                <p>Each hoodie in our collection is more than just fabric; it's a prompt to pause, reflect, and remember the promises of Scripture. We believe that what you wear can be a silent testimony and a personal reminder of grace throughout your day.</p>
+            </section>
+
+            <section class="story-block">
+                <div class="minimal-image-frame">
+                    <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&q=80&w=1200" alt="Embroidery Detail">
+                </div>
+                <p>Our embroidery is done with precision and care, ensuring that your favorite verse lasts as long as the garment itself. By choosing heavyweight 100% cotton and high-density stitching, we prioritize quality over quantity and purpose over fast fashion.</p>
+                <p class="closing-statement">This isn't just apparel. It's Verse & Thread.</p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Verse & Thread. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Instagram</a>
+            <a href="#">Contact</a>
+        </div>
+    </footer>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <span class="close-cart" onclick="toggleCart()">&times;</span>
+        </div>
+        <div id="cart-items-container"></div>
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <span>Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            <button class="btn" style="width:100%" onclick="handleCheckout()">Checkout</button>
+        </div>
+    </div>
+    <div id="cart-overlay" onclick="toggleCart()"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
