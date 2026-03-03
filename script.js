@@ -1,4 +1,4 @@
-// 1. Data Structure - Ensure images match your file names exactly
+// 1. Data Structure - Simplified for Automatic Backend
 const products = [
     { id: 1, name: "The 'Peace' Hoodie", verse: "Philippians 4:7", price: 65, image: "00.jpg" },
     { id: 2, name: "The 'Strength' Hoodie", verse: "Isaiah 40:31", price: 65, image: "02.jpg" },
@@ -12,7 +12,6 @@ let selectedSize = null;
 
 // 3. UI Selectors
 const container = document.getElementById('product-container');
-const cartCountElement = document.getElementById('cart-count');
 const cartSidebar = document.getElementById('cart-sidebar');
 const cartOverlay = document.getElementById('cart-overlay');
 const cartItemsContainer = document.getElementById('cart-items-container');
@@ -60,7 +59,7 @@ function addToCart(productId) {
     const sizeButtonsExist = document.querySelector('.size-buttons');
     
     if (sizeButtonsExist && !selectedSize) {
-        alert("Please select a size (S, M, L, or XL) before adding to cart.");
+        alert("Please select a size before adding to cart.");
         return;
     }
 
@@ -85,8 +84,7 @@ function addToCart(productId) {
     }
     
     selectedSize = null;
-    const buttons = document.querySelectorAll('.size-btn');
-    buttons.forEach(btn => btn.classList.remove('selected'));
+    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
 }
 
 // 8. Render Items Inside the Sidebar
@@ -133,8 +131,7 @@ function removeFromCart(cartId) {
 
 function updateNavCount() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const countElements = document.querySelectorAll('.cart-count-val');
-    countElements.forEach(el => {
+    document.querySelectorAll('.cart-count-val').forEach(el => {
         el.innerText = totalItems;
     });
 }
@@ -143,18 +140,20 @@ function saveCart() {
     localStorage.setItem('brandCart', JSON.stringify(cart));
 }
 
-// 9. AUTOMATIC CHECKOUT REDIRECT
+// 9. THE NEW AUTOMATIC CHECKOUT (REAL REDIRECT)
 async function handleCheckout() {
     if (cart.length === 0) return alert("Add items to your cart first!");
 
-    // Update this to your ACTUAL worker URL (e.g., api.youngdesert.com)
     const BACKEND_URL = "https://api.youngdesert.com/checkout";
     
-    // UI Feedback: Change button text to show it's working
-    const checkoutBtn = document.querySelector('.checkout-btn');
-    const originalText = checkoutBtn.innerText;
-    checkoutBtn.innerText = "Connecting to Stripe...";
-    checkoutBtn.disabled = true;
+    // Find the checkout button and show loading state
+    const checkoutBtn = document.querySelector('.checkout-btn') || document.querySelector('button[onclick="handleCheckout()"]');
+    const originalText = checkoutBtn ? checkoutBtn.innerText : "Checkout";
+    
+    if (checkoutBtn) {
+        checkoutBtn.innerText = "Connecting to Secure Checkout...";
+        checkoutBtn.disabled = true;
+    }
 
     try {
         const response = await fetch(BACKEND_URL, {
@@ -164,23 +163,26 @@ async function handleCheckout() {
         });
 
         const result = await response.json();
-        
+
         if (result.url) {
-            // Success! Send user to Stripe
+            // REDIRECT TO STRIPE
             window.location.href = result.url;
         } else {
-            throw new Error(result.error || "Failed to create checkout session");
+            throw new Error(result.error || "Failed to get checkout link");
         }
         
     } catch (error) {
         console.error("Checkout error:", error);
-        alert("Checkout failed. Please try again later.");
-        checkoutBtn.innerText = originalText;
-        checkoutBtn.disabled = false;
+        alert("Sorry! We couldn't connect to the payment server. Please check your internet or try again.");
+        
+        if (checkoutBtn) {
+            checkoutBtn.innerText = originalText;
+            checkoutBtn.disabled = false;
+        }
     }
 }
 
-// 10. Product Page Loader
+// 10. Product Page Loader & Menu Logic
 function loadProductDetails() {
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
@@ -201,20 +203,14 @@ function loadProductDetails() {
 
 function toggleMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
+    if (!mobileMenu) return;
     mobileMenu.classList.toggle('active');
-    
-    if (mobileMenu.classList.contains('active')) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = 'auto';
-    }
+    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
 }
 
 function openCartFromMenu() {
-    toggleMenu(); 
-    setTimeout(() => {
-        toggleCart(); 
-    }, 300);
+    toggleMenu();
+    setTimeout(() => toggleCart(), 300);
 }
 
 function updateQuantity(cartId, change) {
