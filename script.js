@@ -151,9 +151,25 @@ function saveCart() {
 }
 
 // 9. Checkout Redirect
-function handleCheckout() {
+// Change this function in your script.js
+async function handleCheckout() {
     if (cart.length === 0) return alert("Add items to your cart first!");
-    alert("Proceeding to checkout with " + cart.length + " items.");
+    
+    // YOUR NEW WORKER URL
+    const apiEndpoint = "https://api.yourdomain.com/checkout";
+
+    try {
+        const response = await fetch(apiEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: cart })
+        });
+        
+        const data = await response.json();
+        alert(data.message); // This will now say "Backend received your order!"
+    } catch (error) {
+        alert("Connection to backend failed.");
+    }
 }
 
 // 10. Product Page Loader
@@ -221,5 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
