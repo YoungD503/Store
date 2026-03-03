@@ -144,7 +144,7 @@ function saveCart() {
 async function handleCheckout() {
     if (cart.length === 0) return alert("Add items to your cart first!");
 
-    const BACKEND_URL = "https://api.youngdesert.com/checkout";
+    const BACKEND_URL = "https://www.youngdesert.com/checkout";
     
     // Find the checkout button and show loading state
     const checkoutBtn = document.querySelector('.checkout-btn') || document.querySelector('button[onclick="handleCheckout()"]');
@@ -234,3 +234,4 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
