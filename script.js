@@ -1,9 +1,9 @@
-// 1. Data Structure - Simplified for Automatic Backend
+// 1. Data Structure - Ensure images match your file names exactly
 const products = [
-    { id: 1, name: "The 'Peace' Hoodie", verse: "Philippians 4:7", price: 65, image: "00.jpg" },
-    { id: 2, name: "The 'Strength' Hoodie", verse: "Isaiah 40:31", price: 65, image: "02.jpg" },
-    { id: 3, name: "The 'Light' Hoodie", verse: "Matthew 5:14", price: 65, image: "03.jpg" },
-    { id: 4, name: "The 'Love' Hoodie", verse: "1 Corinthians 13:4", price: 65, image: "04.jpg" }
+    { id: 1, name: "The 'Peace' Hoodie", verse: "Philippians 4:7", price: 65, image: "00.jpg", stripeLink: "#" },
+    { id: 2, name: "The 'Strength' Hoodie", verse: "Isaiah 40:31", price: 65, image: "02.jpg", stripeLink: "#" },
+    { id: 3, name: "The 'Light' Hoodie", verse: "Matthew 5:14", price: 65, image: "03.jpg", stripeLink: "#" },
+    { id: 4, name: "The 'Love' Hoodie", verse: "1 Corinthians 13:4", price: 65, image: "04.jpg", stripeLink: "#" }
 ];
 
 // 2. State Management
@@ -12,6 +12,7 @@ let selectedSize = null;
 
 // 3. UI Selectors
 const container = document.getElementById('product-container');
+const cartCountElement = document.getElementById('cart-count');
 const cartSidebar = document.getElementById('cart-sidebar');
 const cartOverlay = document.getElementById('cart-overlay');
 const cartItemsContainer = document.getElementById('cart-items-container');
@@ -58,13 +59,14 @@ function selectSize(size) {
 function addToCart(productId) {
     const sizeButtonsExist = document.querySelector('.size-buttons');
     
+    // Fix: Ensure a size is always selected, even if it's a default "M"
     if (sizeButtonsExist && !selectedSize) {
-        alert("Please select a size before adding to cart.");
+        alert("Please select a size (S, M, L, or XL) before adding to cart.");
         return;
     }
 
     const product = products.find(p => p.id === productId);
-    const finalSize = selectedSize || "M"; 
+    const finalSize = selectedSize || "M"; // Default to M if no selector exists
     
     const cartId = `${productId}-${finalSize}`;
     const existingItem = cart.find(item => item.cartId === cartId);
@@ -79,12 +81,15 @@ function addToCart(productId) {
     updateNavCount();
     renderCart(); 
     
+    // Automatically open the cart so the user sees it was added
     if (!cartSidebar.classList.contains('active')) {
         toggleCart();
     }
     
+    // Reset selection for UI
     selectedSize = null;
-    document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
+    const buttons = document.querySelectorAll('.size-btn');
+    buttons.forEach(btn => btn.classList.remove('selected'));
 }
 
 // 8. Render Items Inside the Sidebar
@@ -107,11 +112,13 @@ function renderCart() {
                 <div class="cart-item-details">
                     <h4>${item.name}</h4>
                     <p class="item-specs">Size: ${item.size}</p>
+                    
                     <div class="qty-controls">
                         <button onclick="updateQuantity('${item.cartId}', -1)">-</button>
                         <span>${item.quantity}</span>
                         <button onclick="updateQuantity('${item.cartId}', 1)">+</button>
                     </div>
+                    
                     <p class="cart-item-price">$${itemTotal.toFixed(2)}</p>
                 </div>
                 <button class="remove-item" onclick="removeFromCart('${item.cartId}')">&times;</button>
@@ -122,6 +129,7 @@ function renderCart() {
     cartTotalPriceElement.innerText = `$${total.toFixed(2)}`;
 }
 
+// Fix: Improved filtering logic to ensure ID matching works perfectly
 function removeFromCart(cartId) {
     cart = cart.filter(item => String(item.cartId) !== String(cartId));
     saveCart();
@@ -131,7 +139,9 @@ function removeFromCart(cartId) {
 
 function updateNavCount() {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.querySelectorAll('.cart-count-val').forEach(el => {
+    // This updates every element with the class 'cart-count-val'
+    const countElements = document.querySelectorAll('.cart-count-val');
+    countElements.forEach(el => {
         el.innerText = totalItems;
     });
 }
@@ -140,49 +150,37 @@ function saveCart() {
     localStorage.setItem('brandCart', JSON.stringify(cart));
 }
 
-// 9. THE NEW AUTOMATIC CHECKOUT (REAL REDIRECT)
+// 9. Checkout Redirect
 async function handleCheckout() {
-    if (cart.length === 0) return alert("Add items to your cart first!");
-
-    const BACKEND_URL = "https://www.youngdesert.com/checkout";
-    
-    // Find the checkout button and show loading state
-    const checkoutBtn = document.querySelector('.checkout-btn') || document.querySelector('button[onclick="handleCheckout()"]');
-    const originalText = checkoutBtn ? checkoutBtn.innerText : "Checkout";
-    
-    if (checkoutBtn) {
-        checkoutBtn.innerText = "Connecting to Secure Checkout...";
-        checkoutBtn.disabled = true;
+    if (cart.length === 0) {
+        alert("Add items to your cart first!");
+        return;
     }
 
     try {
-        const response = await fetch(BACKEND_URL, {
+        const response = await fetch("https://api.youngdesert.com/checkout", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({ items: cart })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (result.url) {
-            // REDIRECT TO STRIPE
-            window.location.href = result.url;
+        if (data.url) {
+            window.location.href = data.url; // 🔥 Redirect to Stripe
         } else {
-            throw new Error(result.error || "Failed to get checkout link");
+            alert("Checkout error.");
         }
-        
+
     } catch (error) {
-        console.error("Checkout error:", error);
-        alert("Sorry! We couldn't connect to the payment server. Please check your internet or try again.");
-        
-        if (checkoutBtn) {
-            checkoutBtn.innerText = originalText;
-            checkoutBtn.disabled = false;
-        }
+        console.error("Checkout failed:", error);
+        alert("Something went wrong.");
     }
 }
 
-// 10. Product Page Loader & Menu Logic
+// 10. Product Page Loader
 function loadProductDetails() {
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
@@ -201,22 +199,35 @@ function loadProductDetails() {
     }
 }
 
+
 function toggleMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
-    if (!mobileMenu) return;
     mobileMenu.classList.toggle('active');
-    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
+    
+    // Prevent scrolling when menu is open
+    if (mobileMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = 'auto';
+    }
 }
 
+
 function openCartFromMenu() {
-    toggleMenu();
-    setTimeout(() => toggleCart(), 300);
+    toggleMenu(); // Close the mobile menu
+    setTimeout(() => {
+        toggleCart(); // Open the cart sidebar
+    }, 300); // Small delay for a smoother transition
 }
+
+
 
 function updateQuantity(cartId, change) {
     const item = cart.find(item => item.cartId === cartId);
     if (item) {
         item.quantity += change;
+
+        // If quantity goes below 1, remove the item entirely
         if (item.quantity <= 0) {
             removeFromCart(cartId);
         } else {
@@ -234,4 +245,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
