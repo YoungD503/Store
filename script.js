@@ -238,6 +238,77 @@ function updateQuantity(cartId, change) {
     }
 }
 
+
+// 11. Newsletter Modal Logic with Web3Forms Integration
+function initNewsletter() {
+    const overlay = document.getElementById('newsletter-overlay');
+    const closeBtn = document.getElementById('close-newsletter');
+    const form = document.getElementById('newsletter-form');
+
+    const hasSubscribed = localStorage.getItem('newsletterShown');
+
+    if (!hasSubscribed) {
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 5000); 
+    }
+
+    const closeModal = () => {
+        overlay.classList.remove('active');
+        localStorage.setItem('newsletterShown', 'true');
+    };
+
+    closeBtn.onclick = closeModal;
+    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        
+        // UI Feedback: Disable button while sending
+        const submitBtn = form.querySelector('button');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = "Sending...";
+        submitBtn.disabled = true;
+
+        const emailInput = form.querySelector('input[type="email"]').value;
+
+        const formData = new FormData();
+        formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
+        formData.append("email", emailInput);
+        formData.append("subject", "New Newsletter Subscriber - Young Desert");
+        formData.append("from_name", "Young Desert Store");
+        formData.append("message", `New subscriber for the first purchase surprise: ${emailInput}`);
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Success State
+                form.innerHTML = `
+                    <div style="padding: 20px 0;">
+                        <p style='color: #27ae60; font-weight: bold; font-size: 1.1rem;'>Welcome to the family! ✨</p>
+                        <p style='font-size: 0.9rem; color: #666;'>Check your inbox for your surprise.</p>
+                    </div>
+                `;
+                
+                // Final close after showing success message
+                setTimeout(closeModal, 3000);
+            } else {
+                throw new Error("Submission failed");
+            }
+        } catch (error) {
+            console.error("Web3Forms Error:", error);
+            submitBtn.innerText = "Error. Try again?";
+            submitBtn.disabled = false;
+        }
+    };
+}
+
 // --- Initialize ---
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
@@ -245,5 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
