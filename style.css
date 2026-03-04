@@ -630,58 +630,78 @@ footer {
 
 
 
-/* MODERN NEWSLETTER MODAL */
+/* NEWSLETTER MODAL CORE */
 .newsletter-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8); /* Dark background to focus on modal */
-    backdrop-filter: blur(8px); /* Modern blur effect */
-    display: none; /* Controlled by JavaScript */
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: none; /* JS will change this to flex */
     justify-content: center;
     align-items: center;
-    z-index: 999999; /* Higher than any other element */
-    animation: fadeIn 0.4s ease;
+    z-index: 10000; /* Highest priority */
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .newsletter-modal {
-    background: #ffffff;
+    background: white;
     width: 90%;
-    max-width: 450px;
+    max-width: 460px;
     padding: 60px 40px;
     position: relative;
     text-align: center;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border-radius: 2px; /* Minimalist sharp edges */
+    /* Slide-up starting position */
+    transform: translateY(50px);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+    opacity: 0;
+}
+
+/* State when modal is visible */
+.newsletter-overlay.active {
+    opacity: 1;
+}
+
+.newsletter-overlay.active .newsletter-modal {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Typography & Elements */
+.modal-subtitle {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.7rem;
+    margin-bottom: 10px;
+    color: #888;
 }
 
 .newsletter-modal h2 {
-    font-family: serif; /* Matches a high-end brand aesthetic */
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
     font-size: 2.2rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+    letter-spacing: -1px;
     margin-bottom: 15px;
-    font-weight: 400;
-}
-
-.newsletter-modal p {
-    color: #444;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 30px;
+    text-transform: uppercase;
 }
 
 .newsletter-modal input[type="email"] {
     width: 100%;
-    padding: 15px;
-    border: 1px solid #000;
-    margin-bottom: 20px;
-    font-family: inherit;
-    text-align: center;
-    outline: none;
+    padding: 18px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 15px;
     font-size: 1rem;
+    text-align: center;
+    transition: border 0.3s;
+}
+
+.newsletter-modal input:focus {
+    border-color: #000;
+    outline: none;
 }
 
 .btn-modern {
@@ -689,33 +709,26 @@ footer {
     padding: 18px;
     background: #000;
     color: #fff;
-    border: 1px solid #000;
-    text-transform: uppercase;
+    border: none;
+    font-weight: 700;
     letter-spacing: 2px;
-    font-weight: 600;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.2s;
 }
 
-.btn-modern:hover {
-    background: #333;
-    border-color: #333;
+.btn-modern:active {
+    transform: scale(0.98);
 }
 
 .close-modal {
     position: absolute;
-    top: 15px;
+    top: 20px;
     right: 20px;
     background: none;
     border: none;
-    font-size: 32px;
+    font-size: 28px;
     cursor: pointer;
-    color: #000;
-    line-height: 1;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
 
