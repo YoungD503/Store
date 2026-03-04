@@ -238,33 +238,40 @@ function updateQuantity(cartId, change) {
     }
 }
 
-
 function initNewsletter() {
     const overlay = document.getElementById('newsletter-overlay');
     const closeBtn = document.getElementById('close-newsletter');
     const form = document.getElementById('newsletter-form');
 
-    // Prevent showing if they already saw it in this session
+    if (!overlay || !closeBtn || !form) return;
+
+    // Don't show if already shown this session
     if (sessionStorage.getItem('newsletter_shown')) return;
 
-    // Show after exactly 5 seconds
+    // Show after 5 seconds
     setTimeout(() => {
-        overlay.style.display = 'flex';
+        overlay.classList.add('active');
+        document.body.classList.add('modal-open');
     }, 5000);
 
     const dismissModal = () => {
-        overlay.style.display = 'none';
+        overlay.classList.remove('active');
+        document.body.classList.remove('modal-open');
         sessionStorage.setItem('newsletter_shown', 'true');
     };
 
-    closeBtn.onclick = dismissModal;
-    overlay.onclick = (e) => { if (e.target === overlay) dismissModal(); };
+    closeBtn.addEventListener('click', dismissModal);
 
-    form.onsubmit = async (e) => {
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) dismissModal();
+    });
+
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
         const btn = form.querySelector('button');
         const email = form.querySelector('input').value;
-        
+
         btn.innerText = "JOINING...";
         btn.disabled = true;
 
@@ -280,21 +287,21 @@ function initNewsletter() {
             });
 
             if (res.ok) {
-                form.innerHTML = "<p style='font-weight: bold; font-size: 1.2rem; color: #000;'>WELCOME TO THE FAMILY. CHECK YOUR INBOX.</p>";
+                form.innerHTML =
+                    "<p style='font-weight: bold; font-size: 1.2rem; color: #000;'>WELCOME TO THE FAMILY. CHECK YOUR INBOX.</p>";
+
                 setTimeout(dismissModal, 3000);
+            } else {
+                throw new Error();
             }
         } catch (error) {
             btn.innerText = "ERROR. TRY AGAIN?";
             btn.disabled = false;
         }
-    };
+    });
 }
 
-// Ensure this is inside your DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', () => {
-    // ... your other functions
-    initNewsletter(); 
-});
+document.addEventListener('DOMContentLoaded', initNewsletter);
 // --- Initialize ---
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
@@ -302,4 +309,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
