@@ -241,49 +241,61 @@ function updateQuantity(cartId, change) {
 
 function initNewsletter() {
     const overlay = document.getElementById('newsletter-overlay');
-    const form = document.getElementById('newsletter-form');
     const closeBtn = document.getElementById('close-newsletter');
+    const form = document.getElementById('newsletter-form');
 
+    // 1. Don't show if they already closed it
     if (localStorage.getItem('newsletter_closed')) return;
 
-    // 1. Wait 5 seconds to show
+    // 2. The Reveal Timer
     setTimeout(() => {
-        overlay.style.display = 'flex';
-        // 2. Tiny delay to trigger CSS transitions
+        overlay.style.display = 'flex'; // First, make it exist
         setTimeout(() => {
-            overlay.classList.add('active');
-        }, 10);
+            overlay.classList.add('active'); // Then, trigger the animation
+        }, 50); 
     }, 5000);
 
-    const closeHandler = () => {
+    // 3. The Close Logic
+    const closeNewsletter = () => {
         overlay.classList.remove('active');
-        setTimeout(() => { overlay.style.display = 'none'; }, 500);
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 500); // Wait for fade-out animation
         localStorage.setItem('newsletter_closed', 'true');
     };
 
-    closeBtn.onclick = closeHandler;
-    overlay.onclick = (e) => { if(e.target === overlay) closeHandler(); };
+    closeBtn.onclick = closeNewsletter;
 
+    // Close if clicking the dark background (the overlay) but NOT the white modal
+    overlay.onclick = (e) => {
+        if (e.target === overlay) closeNewsletter();
+    };
+
+    // 4. Form Submission Logic
     form.onsubmit = async (e) => {
         e.preventDefault();
-        const btn = form.querySelector('button');
-        btn.innerText = "SAYING HELLO...";
-        
-        const formData = new FormData();
+        const submitBtn = form.querySelector('button');
+        submitBtn.innerText = "SENDING...";
+
+        const formData = new FormData(form);
         formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
-        formData.append("email", form.querySelector('input').value);
 
         try {
-            const res = await fetch("https://api.web3forms.com/submit", {
+            const response = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData
             });
-            if (res.ok) {
-                form.innerHTML = "<h4>WELCOME.</h4><p>Check your email for your gift.</p>";
-                setTimeout(closeHandler, 3000);
+
+            if (response.ok) {
+                form.innerHTML = `
+                    <div style="padding: 20px 0;">
+                        <h3 style="margin-bottom:10px;">WELCOME TO THE DESERT.</h3>
+                        <p>Your code is in your inbox.</p>
+                    </div>`;
+                setTimeout(closeNewsletter, 3000);
             }
-        } catch (err) {
-            btn.innerText = "TRY AGAIN";
+        } catch (error) {
+            submitBtn.innerText = "ERROR - TRY AGAIN";
         }
     };
 }
@@ -295,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCart(); 
     initNewsletter();      // Starts the 5-second timer for the modern modal
 });
+
 
 
 
