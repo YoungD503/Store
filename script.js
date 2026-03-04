@@ -239,72 +239,53 @@ function updateQuantity(cartId, change) {
 }
 
 
-// 11. Newsletter Modal Logic with Web3Forms Integration
 function initNewsletter() {
     const overlay = document.getElementById('newsletter-overlay');
     const closeBtn = document.getElementById('close-newsletter');
     const form = document.getElementById('newsletter-form');
 
-    const hasSubscribed = localStorage.getItem('newsletterShown');
+    // Check if they've seen it already
+    if (localStorage.getItem('newsletterShown')) return;
 
-    if (!hasSubscribed) {
+    // Show after 5 seconds
+    setTimeout(() => {
+        overlay.style.display = 'flex'; // Set display first
         setTimeout(() => {
-            overlay.classList.add('active');
-        }, 5000); 
-    }
+            overlay.classList.add('active'); // Then trigger opacity/transform
+        }, 10);
+    }, 5000);
 
-    const closeModal = () => {
+    const closeHandler = () => {
         overlay.classList.remove('active');
+        setTimeout(() => { overlay.style.display = 'none'; }, 400);
         localStorage.setItem('newsletterShown', 'true');
     };
 
-    closeBtn.onclick = closeModal;
-    overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+    closeBtn.onclick = closeHandler;
+    overlay.onclick = (e) => { if (e.target === overlay) closeHandler(); };
 
     form.onsubmit = async (e) => {
         e.preventDefault();
-        
-        // UI Feedback: Disable button while sending
         const submitBtn = form.querySelector('button');
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = "Sending...";
-        submitBtn.disabled = true;
-
-        const emailInput = form.querySelector('input[type="email"]').value;
-
+        submitBtn.innerText = "SENDING...";
+        
+        const email = form.querySelector('input').value;
         const formData = new FormData();
         formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
-        formData.append("email", emailInput);
-        formData.append("subject", "New Newsletter Subscriber - Young Desert");
-        formData.append("from_name", "Young Desert Store");
-        formData.append("message", `New subscriber for the first purchase surprise: ${emailInput}`);
+        formData.append("email", email);
+        formData.append("message", "New subscriber for first purchase surprise.");
 
         try {
-            const response = await fetch("https://api.web3forms.com/submit", {
+            const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData
             });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // Success State
-                form.innerHTML = `
-                    <div style="padding: 20px 0;">
-                        <p style='color: #27ae60; font-weight: bold; font-size: 1.1rem;'>Welcome to the family! ✨</p>
-                        <p style='font-size: 0.9rem; color: #666;'>Check your inbox for your surprise.</p>
-                    </div>
-                `;
-                
-                // Final close after showing success message
-                setTimeout(closeModal, 3000);
-            } else {
-                throw new Error("Submission failed");
+            if (res.ok) {
+                form.innerHTML = "<p style='margin:0; color: #000; font-weight: bold;'>WELCOME TO THE FAMILY.</p>";
+                setTimeout(closeHandler, 2500);
             }
-        } catch (error) {
-            console.error("Web3Forms Error:", error);
-            submitBtn.innerText = "Error. Try again?";
-            submitBtn.disabled = false;
+        } catch (err) {
+            submitBtn.innerText = "TRY AGAIN";
         }
     };
 }
@@ -316,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
 
