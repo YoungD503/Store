@@ -244,53 +244,57 @@ function initNewsletter() {
     const closeBtn = document.getElementById('close-newsletter');
     const form = document.getElementById('newsletter-form');
 
-    // If they already closed it once, don't show it again
-    if (localStorage.getItem('newsletter_dismissed')) return;
+    // Prevent showing if they already saw it in this session
+    if (sessionStorage.getItem('newsletter_shown')) return;
 
-    // Wait 5 seconds
+    // Show after exactly 5 seconds
     setTimeout(() => {
         overlay.style.display = 'flex';
     }, 5000);
 
-    const closeFunc = () => {
+    const dismissModal = () => {
         overlay.style.display = 'none';
-        localStorage.setItem('newsletter_dismissed', 'true');
+        sessionStorage.setItem('newsletter_shown', 'true');
     };
 
-    closeBtn.onclick = closeFunc;
-    
-    // Close on background click
-    overlay.onclick = (e) => {
-        if (e.target === overlay) closeFunc();
-    };
+    closeBtn.onclick = dismissModal;
+    overlay.onclick = (e) => { if (e.target === overlay) dismissModal(); };
 
     form.onsubmit = async (e) => {
         e.preventDefault();
         const btn = form.querySelector('button');
-        btn.innerText = "SENDING...";
+        const email = form.querySelector('input').value;
+        
+        btn.innerText = "JOINING...";
         btn.disabled = true;
 
-        const email = form.querySelector('input').value;
         const formData = new FormData();
         formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
         formData.append("email", email);
-        formData.append("subject", "New Subscriber - Young Desert");
+        formData.append("subject", "Young Desert New Subscriber");
 
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData
             });
+
             if (res.ok) {
-                form.innerHTML = "<h3>THANK YOU.</h3><p>Your surprise is on its way to your inbox.</p>";
-                setTimeout(closeFunc, 3000);
+                form.innerHTML = "<p style='font-weight: bold; font-size: 1.2rem; color: #000;'>WELCOME TO THE FAMILY. CHECK YOUR INBOX.</p>";
+                setTimeout(dismissModal, 3000);
             }
-        } catch (err) {
-            btn.innerText = "TRY AGAIN";
+        } catch (error) {
+            btn.innerText = "ERROR. TRY AGAIN?";
             btn.disabled = false;
         }
     };
 }
+
+// Ensure this is inside your DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () => {
+    // ... your other functions
+    initNewsletter(); 
+});
 // --- Initialize ---
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
@@ -298,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
 
