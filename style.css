@@ -630,45 +630,47 @@ footer {
 
 
 
-/* NEWSLETTER MODAL FIX */
+/* MODERN NEWSLETTER MODAL */
 .newsletter-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.85); /* Darker backdrop for focus */
-    backdrop-filter: blur(8px);
-    display: none; /* Controlled by JS */
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Dark background to focus on modal */
+    backdrop-filter: blur(8px); /* Modern blur effect */
+    display: none; /* Controlled by JavaScript */
     justify-content: center;
     align-items: center;
-    z-index: 99999; /* Force it to the top */
+    z-index: 999999; /* Higher than any other element */
+    animation: fadeIn 0.4s ease;
 }
 
 .newsletter-modal {
-    background: #fff;
+    background: #ffffff;
     width: 90%;
-    max-width: 500px;
+    max-width: 450px;
     padding: 60px 40px;
     position: relative;
     text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-    /* Modern minimalist look */
-    border: 1px solid #eee;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border-radius: 2px; /* Minimalist sharp edges */
 }
 
 .newsletter-modal h2 {
-    font-size: 2rem;
-    letter-spacing: 4px;
+    font-family: serif; /* Matches a high-end brand aesthetic */
+    font-size: 2.2rem;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    margin-bottom: 20px;
-    font-weight: 300;
+    margin-bottom: 15px;
+    font-weight: 400;
 }
 
 .newsletter-modal p {
-    color: #666;
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.5;
     margin-bottom: 30px;
-    line-height: 1.6;
 }
 
 .newsletter-modal input[type="email"] {
@@ -679,6 +681,7 @@ footer {
     font-family: inherit;
     text-align: center;
     outline: none;
+    font-size: 1rem;
 }
 
 .btn-modern {
@@ -686,26 +689,33 @@ footer {
     padding: 18px;
     background: #000;
     color: #fff;
-    border: none;
+    border: 1px solid #000;
     text-transform: uppercase;
     letter-spacing: 2px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .btn-modern:hover {
     background: #333;
+    border-color: #333;
 }
 
 .close-modal {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 20px;
     background: none;
     border: none;
-    font-size: 30px;
+    font-size: 32px;
     cursor: pointer;
+    color: #000;
     line-height: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
