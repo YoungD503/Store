@@ -624,3 +624,52 @@ footer {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+.newsletter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.newsletter-modal {
+    background: white;
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.newsletter-modal h2 { margin-top: 0; font-family: 'Playfair Display', serif; }
+.newsletter-modal p { margin-bottom: 25px; color: #555; }
+
+.newsletter-modal input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+}
+
+.newsletter-overlay.active { display: flex; }
+
