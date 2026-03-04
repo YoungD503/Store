@@ -630,58 +630,45 @@ footer {
 
 
 
-/* Newsletter Modal Styles */
+/* NEWSLETTER MODAL FIX */
 .newsletter-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dimmed background */
-    backdrop-filter: blur(5px); /* Modern blur effect */
-    display: none; 
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85); /* Darker backdrop for focus */
+    backdrop-filter: blur(8px);
+    display: none; /* Controlled by JS */
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Ensure it's above everything */
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.newsletter-overlay.active {
-    display: flex;
-    opacity: 1;
+    z-index: 99999; /* Force it to the top */
 }
 
 .newsletter-modal {
     background: #fff;
-    padding: 50px 40px;
     width: 90%;
-    max-width: 450px;
-    border-radius: 0; /* Sharp edges for a modern brand look */
-    text-align: center;
+    max-width: 500px;
+    padding: 60px 40px;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    transform: translateY(20px);
-    transition: transform 0.4s ease;
-}
-
-.newsletter-overlay.active .newsletter-modal {
-    transform: translateY(0);
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    /* Modern minimalist look */
+    border: 1px solid #eee;
 }
 
 .newsletter-modal h2 {
-    font-family: 'serif'; /* Or your brand font */
-    font-size: 1.8rem;
-    letter-spacing: 2px;
+    font-size: 2rem;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    font-weight: 300;
 }
 
 .newsletter-modal p {
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.6;
+    color: #666;
     margin-bottom: 30px;
+    line-height: 1.6;
 }
 
 .newsletter-modal input[type="email"] {
@@ -689,35 +676,36 @@ footer {
     padding: 15px;
     border: 1px solid #000;
     margin-bottom: 20px;
-    outline: none;
-    font-size: 1rem;
+    font-family: inherit;
     text-align: center;
+    outline: none;
 }
 
-.newsletter-modal .btn {
+.btn-modern {
     width: 100%;
-    padding: 15px;
+    padding: 18px;
     background: #000;
     color: #fff;
     border: none;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: 0.3s;
 }
 
-.newsletter-modal .btn:hover {
+.btn-modern:hover {
     background: #333;
 }
 
 .close-modal {
     position: absolute;
-    top: 15px;
+    top: 20px;
     right: 20px;
-    font-size: 28px;
     background: none;
     border: none;
+    font-size: 30px;
     cursor: pointer;
-    color: #000;
+    line-height: 1;
 }
 
