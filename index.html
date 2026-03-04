@@ -2,77 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Young Desert | Official Store</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <title>YOUNG DESERT</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- ================= NAVBAR ================= -->
-<header class="navbar">
-    <div class="logo">YOUNG DESERT</div>
+<nav>
+    <div class="logo"><a href="index.html">YOUNG DESERT</a></div>
+    
+    <div class="nav-right">
+        <ul class="desktop-links">
+            <li><a href="index.html#shop">Shop</a></li>
+            <li><a href="story.html">Our Story</a></li>
+            <li><a href="javascript:void(0)" class="desktop-cart-link" onclick="toggleCart()">Cart (<span class="cart-count-val">0</span>)</a></li>
+        </ul>
 
-    <nav class="nav-links">
-        <a href="#">Home</a>
-        <a href="#">Shop</a>
-        <a href="#">About</a>
-    </nav>
+        <a href="javascript:void(0)" class="menu-btn" onclick="toggleMenu()">Menu</a>
+    </div>
+</nav>
 
-    <div class="nav-icons">
-        <div class="cart-icon" onclick="toggleCart()">
-            🛒 <span class="cart-count-val">0</span>
+<div id="mobile-menu" class="mobile-menu-overlay">
+    <span class="close-menu" onclick="toggleMenu()">&times;</span>
+    <ul class="mobile-nav-links">
+        <li><a href="index.html#shop" onclick="toggleMenu()">Shop</a></li>
+        <li><a href="story.html" onclick="toggleMenu()">Our Story</a></li>
+        <li>
+            <a href="javascript:void(0)" onclick="openCartFromMenu()">
+                Cart (<span class="cart-count-val">0</span>)
+            </a>
+        </li>
+    </ul>
+</div>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Woven Word</h1>
+            <p>Premium embroidered hoodies featuring timeless scripture.</p>
+            <a href="#shop" class="btn">View Collection</a>
         </div>
-        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </header>
+
+    <main id="shop">
+        <h2 style="text-align: center; margin-top: 4rem;">The Scriptural Collection</h2>
+        <div class="product-grid" id="product-container">
+            </div>
+    </main>
+
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <span class="close-cart" onclick="toggleCart()">&times;</span>
+        </div>
+        
+        <div id="cart-items-container">
+            <p style="padding: 20px; color: #888;">Your cart is empty.</p>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            <button class="btn checkout-btn" onclick="handleCheckout()">Proceed to Checkout</button>
+        </div>
     </div>
-</header>
 
-<!-- ================= MOBILE MENU ================= -->
-<div id="mobile-menu" class="mobile-menu">
-    <a href="#">Home</a>
-    <a href="#">Shop</a>
-    <a href="#">About</a>
-    <a href="#" onclick="openCartFromMenu()">Cart (<span class="cart-count-val">0</span>)</a>
-</div>
+    <div id="cart-overlay" onclick="toggleCart()"></div>
 
-<!-- ================= PRODUCTS GRID ================= -->
-<main class="main-container">
-    <h1 class="section-title">FAITH COLLECTION</h1>
-    <div id="product-container" class="product-grid"></div>
-</main>
+    <footer>
+        <p>&copy; 2026 Young Desert. Hand-embroidered with purpose.</p>
+    </footer>
 
-<!-- ================= CART OVERLAY ================= -->
-<div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
 
-<!-- ================= CART SIDEBAR ================= -->
-<div id="cart-sidebar" class="cart-sidebar">
-    <div class="cart-header">
-        <h2>Your Cart</h2>
-        <button onclick="toggleCart()">✕</button>
-    </div>
 
-    <div id="cart-items-container" class="cart-items"></div>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="script.js"></script>
 
-    <div class="cart-footer">
-        <h3>Total: <span id="cart-total-price">$0.00</span></h3>
-        <button class="checkout-btn" onclick="handleCheckout()">Checkout</button>
-    </div>
-</div>
-
-<!-- ================= NEWSLETTER MODAL ================= -->
 <div id="newsletter-overlay" class="newsletter-overlay">
     <div class="newsletter-modal">
-        <button id="close-newsletter" class="close-newsletter">✕</button>
-        <h2>JOIN THE DESERT</h2>
-        <p>Get exclusive drops & 10% off.</p>
-
-        <form id="newsletter-form">
-            <input type="email" name="email" placeholder="Enter your email" required>
-            <button type="submit">JOIN</button>
-        </form>
+        <button class="close-modal" id="close-newsletter" aria-label="Close">&times;</button>
+        <div class="modal-content">
+            <span class="modal-subtitle">Join the Community</span>
+            <h2>Young Desert</h2>
+            <p>Subscribe to receive a <strong>special surprise</strong> on your first order.</p>
+            <form id="newsletter-form">
+                <input type="email" name="email" placeholder="YOUR@EMAIL.COM" required>
+                <button type="submit" class="btn-modern">Unlock Surprise</button>
+            </form>
+        </div>
     </div>
 </div>
-
-<script src="script.js"></script>
 </body>
 </html>
 
