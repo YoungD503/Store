@@ -244,36 +244,37 @@ function initNewsletter() {
     const closeBtn = document.getElementById('close-newsletter');
     const form = document.getElementById('newsletter-form');
 
-    // Check if they've seen it already
-    if (localStorage.getItem('newsletterShown')) return;
+    // If they already closed it once, don't show it again
+    if (localStorage.getItem('newsletter_dismissed')) return;
 
-    // Show after 5 seconds
+    // Wait 5 seconds
     setTimeout(() => {
-        overlay.style.display = 'flex'; // Set display first
-        setTimeout(() => {
-            overlay.classList.add('active'); // Then trigger opacity/transform
-        }, 10);
+        overlay.style.display = 'flex';
     }, 5000);
 
-    const closeHandler = () => {
-        overlay.classList.remove('active');
-        setTimeout(() => { overlay.style.display = 'none'; }, 400);
-        localStorage.setItem('newsletterShown', 'true');
+    const closeFunc = () => {
+        overlay.style.display = 'none';
+        localStorage.setItem('newsletter_dismissed', 'true');
     };
 
-    closeBtn.onclick = closeHandler;
-    overlay.onclick = (e) => { if (e.target === overlay) closeHandler(); };
+    closeBtn.onclick = closeFunc;
+    
+    // Close on background click
+    overlay.onclick = (e) => {
+        if (e.target === overlay) closeFunc();
+    };
 
     form.onsubmit = async (e) => {
         e.preventDefault();
-        const submitBtn = form.querySelector('button');
-        submitBtn.innerText = "SENDING...";
-        
+        const btn = form.querySelector('button');
+        btn.innerText = "SENDING...";
+        btn.disabled = true;
+
         const email = form.querySelector('input').value;
         const formData = new FormData();
         formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
         formData.append("email", email);
-        formData.append("message", "New subscriber for first purchase surprise.");
+        formData.append("subject", "New Subscriber - Young Desert");
 
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
@@ -281,15 +282,15 @@ function initNewsletter() {
                 body: formData
             });
             if (res.ok) {
-                form.innerHTML = "<p style='margin:0; color: #000; font-weight: bold;'>WELCOME TO THE FAMILY.</p>";
-                setTimeout(closeHandler, 2500);
+                form.innerHTML = "<h3>THANK YOU.</h3><p>Your surprise is on its way to your inbox.</p>";
+                setTimeout(closeFunc, 3000);
             }
         } catch (err) {
-            submitBtn.innerText = "TRY AGAIN";
+            btn.innerText = "TRY AGAIN";
+            btn.disabled = false;
         }
     };
 }
-
 // --- Initialize ---
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
@@ -297,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
 
