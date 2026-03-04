@@ -293,7 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateNavCount();
     loadProductDetails();
     renderCart(); 
+    initNewsletter();      // Starts the 5-second timer for the modern modal
 });
+
 
 
 
