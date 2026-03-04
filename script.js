@@ -241,60 +241,52 @@ function updateQuantity(cartId, change) {
 
 function initNewsletter() {
     const overlay = document.getElementById('newsletter-overlay');
-    const closeBtn = document.getElementById('close-newsletter');
     const form = document.getElementById('newsletter-form');
+    const closeBtn = document.getElementById('close-newsletter');
 
-    // Prevent showing if they already saw it in this session
-    if (sessionStorage.getItem('newsletter_shown')) return;
+    if (localStorage.getItem('newsletter_closed')) return;
 
-    // Show after exactly 5 seconds
+    // 1. Wait 5 seconds to show
     setTimeout(() => {
         overlay.style.display = 'flex';
+        // 2. Tiny delay to trigger CSS transitions
+        setTimeout(() => {
+            overlay.classList.add('active');
+        }, 10);
     }, 5000);
 
-    const dismissModal = () => {
-        overlay.style.display = 'none';
-        sessionStorage.setItem('newsletter_shown', 'true');
+    const closeHandler = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => { overlay.style.display = 'none'; }, 500);
+        localStorage.setItem('newsletter_closed', 'true');
     };
 
-    closeBtn.onclick = dismissModal;
-    overlay.onclick = (e) => { if (e.target === overlay) dismissModal(); };
+    closeBtn.onclick = closeHandler;
+    overlay.onclick = (e) => { if(e.target === overlay) closeHandler(); };
 
     form.onsubmit = async (e) => {
         e.preventDefault();
         const btn = form.querySelector('button');
-        const email = form.querySelector('input').value;
+        btn.innerText = "SAYING HELLO...";
         
-        btn.innerText = "JOINING...";
-        btn.disabled = true;
-
         const formData = new FormData();
         formData.append("access_key", "8c2f6208-ecac-4ce7-bc3c-02d5c8493e97");
-        formData.append("email", email);
-        formData.append("subject", "Young Desert New Subscriber");
+        formData.append("email", form.querySelector('input').value);
 
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST",
                 body: formData
             });
-
             if (res.ok) {
-                form.innerHTML = "<p style='font-weight: bold; font-size: 1.2rem; color: #000;'>WELCOME TO THE FAMILY. CHECK YOUR INBOX.</p>";
-                setTimeout(dismissModal, 3000);
+                form.innerHTML = "<h4>WELCOME.</h4><p>Check your email for your gift.</p>";
+                setTimeout(closeHandler, 3000);
             }
-        } catch (error) {
-            btn.innerText = "ERROR. TRY AGAIN?";
-            btn.disabled = false;
+        } catch (err) {
+            btn.innerText = "TRY AGAIN";
         }
     };
 }
-
-// Ensure this is inside your DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', () => {
-    // ... your other functions
-    initNewsletter(); 
-});
 // --- Initialize ---
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts();
@@ -302,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProductDetails();
     renderCart(); 
 });
+
 
 
 
