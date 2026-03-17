@@ -733,3 +733,333 @@ body.modal-open {
 
 
 
+--------------------------------
+
+
+
+
+/* ─────────────────────────────────────────────────────────────
+   TWO MODALS  – paste this at the END of style.css
+   1. Shared base styles
+   2. Email Capture Modal
+   3. Offer / Marketing Modal
+   ───────────────────────────────────────────────────────────── */
+
+/* ── 1. SHARED BASE ─────────────────────────────────────────── */
+
+.yd-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 8, 5, 0.75);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 9000;
+  opacity: 0;
+  transition: opacity 0.38s ease;
+  pointer-events: none;
+}
+.yd-backdrop.yd-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.yd-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -47%) scale(0.96);
+  z-index: 9001;
+  background: #faf8f4;
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.32);
+}
+.yd-modal.yd-visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+/* Close button */
+.yd-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #aaa;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  transition: color 0.2s;
+}
+.yd-close:hover { color: #111; }
+
+/* Shared typography */
+.yd-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0 0 8px;
+}
+.yd-headline {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #0f0d0a;
+  line-height: 1.05;
+  margin: 0 0 12px;
+}
+.yd-sub {
+  font-size: 0.82rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 22px;
+}
+.yd-btn-primary {
+  display: block;
+  width: 100%;
+  background: #0f0d0a;
+  color: #faf8f4;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 10px;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  margin-bottom: 10px;
+}
+.yd-btn-primary:hover {
+  background: #2a2620;
+  transform: translateY(-1px);
+}
+.yd-btn-ghost {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 1.5px solid #ddd;
+  color: #999;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  margin-bottom: 14px;
+}
+.yd-btn-ghost:hover {
+  border-color: #aaa;
+  color: #444;
+}
+.yd-fine {
+  font-size: 0.65rem;
+  color: #bbb;
+  margin: 0;
+  text-align: center;
+}
+
+
+/* ── 2. EMAIL CAPTURE MODAL ──────────────────────────────────── */
+
+#email-modal {
+  width: min(90vw, 440px);
+}
+
+.email-inner {
+  padding: 48px 36px 36px;
+  position: relative;
+}
+
+/* Decorative vertical accent line */
+.email-deco-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: #0f0d0a;
+}
+
+/* Form row */
+.email-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.email-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  color: #0f0d0a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.email-input:focus {
+  border-color: #0f0d0a;
+}
+.email-input::placeholder {
+  color: #bbb;
+}
+
+/* Inline submit button inside form row */
+.email-submit-btn {
+  margin-bottom: 0;
+}
+
+/* Error message */
+.email-error {
+  font-size: 0.72rem;
+  color: #c0392b;
+  min-height: 18px;
+  margin: 0 0 10px;
+}
+
+/* Success state */
+.email-success {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f0f7f0;
+  border-radius: 3px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.email-checkmark {
+  font-size: 1.2rem;
+  color: #27ae60;
+  flex-shrink: 0;
+}
+.email-success p {
+  font-size: 0.82rem;
+  color: #2d6a4f;
+  margin: 0;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .email-inner { padding: 40px 24px 28px; }
+}
+
+
+/* ── 3. OFFER / MARKETING MODAL ──────────────────────────────── */
+
+#offer-modal {
+  width: min(92vw, 680px);
+}
+
+/* Two-column split layout */
+.offer-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Left image column */
+.offer-img-col {
+  position: relative;
+  overflow: hidden;
+  min-height: 320px;
+}
+.offer-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: #0f0d0a;
+  color: #faf8f4;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  border-radius: 2px;
+  z-index: 2;
+}
+.offer-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 6s ease;
+}
+#offer-modal.yd-visible .offer-img {
+  transform: scale(1.06);
+}
+
+/* Right content column */
+.offer-content-col {
+  padding: 40px 28px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Discount pill */
+.offer-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0ebe2;
+  border-radius: 2px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+.offer-pct {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0f0d0a;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.offer-code-label {
+  font-size: 0.75rem;
+  color: #777;
+}
+.offer-code {
+  display: inline-block;
+  background: #fff;
+  color: #0f0d0a;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+}
+
+/* Stack buttons to bottom */
+.offer-content-col .yd-btn-primary,
+.offer-content-col .yd-btn-ghost { margin-top: auto; }
+.offer-content-col .yd-btn-ghost { margin-top: 0; }
+
+/* Collapse to single column on mobile */
+@media (max-width: 540px) {
+  .offer-split { grid-template-columns: 1fr; }
+  .offer-img-col { min-height: 180px; }
+  .offer-content-col { padding: 24px 22px 22px; }
+}
+
+
+
+
+
+
