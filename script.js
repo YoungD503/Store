@@ -302,14 +302,6 @@ function initNewsletter() {
 }
 
 
-document.addEventListener('DOMContentLoaded', initNewsletter);
-// --- Initialize ---
-document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
-    updateNavCount();
-    loadProductDetails();
-    renderCart(); 
-});
 
 
 ---------------------------------------------------------
@@ -535,5 +527,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 })();
+
+--------------------------------------------------------------
+
+
+
+    document.addEventListener('DOMContentLoaded', initNewsletter);
+// --- Initialize ---
+document.addEventListener('DOMContentLoaded', () => {
+    renderProducts();
+    updateNavCount();
+    loadProductDetails();
+    renderCart(); 
+});
+
 
 
