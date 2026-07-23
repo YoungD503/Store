@@ -316,4 +316,44 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// ===============================
+// Book Promo Section
+// Append this to the end of script.js
+// ===============================
+
+// 11. Book Promo — scroll reveal + buy link
+function initBookPromo() {
+    const section = document.querySelector('.book-promo');
+    const buyBtn = document.getElementById('book-buy-btn');
+
+    if (!section) return;
+
+    // Reveal the section once when it scrolls into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+
+    if (buyBtn) {
+        // TODO: replace '#' in the href with your real purchase link
+        // (Amazon, your own store, Gumroad, etc.)
+        buyBtn.addEventListener('click', (e) => {
+            if (buyBtn.getAttribute('href') === '#') {
+                e.preventDefault();
+                alert('Add your book\'s purchase link to the "Get the Book" button.');
+            }
+            // Optional: hook in analytics here, e.g.
+            // gtag('event', 'book_promo_click');
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initBookPromo);
+
 
