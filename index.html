@@ -85,6 +85,41 @@
     </div>
 </section>
 
+
+        <!--
+  VIDEO FEATURE SECTION
+  Paste this inside <main>, after the book-promo section (or wherever you want it).
+
+  Replace YOUR_VIDEO_ID (it appears twice in the src URL below) with your real
+  YouTube video ID — the part after "v=" in a normal YouTube link, e.g.
+  https://www.youtube.com/watch?v=dQw4w9WgXcQ  ->  ID is "dQw4w9WgXcQ"
+
+  Autoplay-on-load only works if the video starts muted — that's a browser
+  rule, not something we can change — so it opens muted with a tap-to-unmute
+  button over the frame.
+-->
+<section class="video-feature" id="watch">
+    <div class="video-feature-inner">
+        <span class="brand-subtext">Watch</span>
+        <h2 class="video-title">Young Desert — The Story in Motion</h2>
+
+        <div class="video-frame">
+            <iframe
+                id="brand-video"
+                src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=YOUR_VIDEO_ID&rel=0&modestbranding=1&enablejsapi=1"
+                title="Young Desert brand video"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+            <button class="video-sound-toggle" id="video-sound-toggle" aria-label="Unmute video">
+                <span class="sound-icon">🔇</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+        
         
     </main>
 
