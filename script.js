@@ -378,7 +378,6 @@ const videos = [
     { id: "YOUR_VIDEO_ID_4", title: "[ Video 4 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
     { id: "YOUR_VIDEO_ID_5", title: "[ Video 5 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
     { id: "YOUR_VIDEO_ID_6", title: "[ Video 6 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
-    { id: "YOUR_VIDEO_ID_7", title: "[ Video 7 Title ]", review: "“[ Insert a real review or reaction quote here ]”" }
 ];
 
 function renderVideoGrid() {
