@@ -357,3 +357,58 @@ function initBookPromo() {
 document.addEventListener('DOMContentLoaded', initBookPromo);
 
 
+
+
+
+
+
+
+// ===============================
+// Video Feature Section
+// Append this to the end of script.js (after the book promo block)
+// ===============================
+
+// 12. Video Feature — scroll reveal + sound toggle
+function initVideoFeature() {
+    const section = document.querySelector('.video-feature');
+    const video = document.getElementById('brand-video');
+    const soundBtn = document.getElementById('video-sound-toggle');
+
+    if (!section) return;
+
+    // Reveal the section once when it scrolls into view
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+
+    if (video && soundBtn) {
+        let muted = true;
+
+        soundBtn.addEventListener('click', () => {
+            muted = !muted;
+
+            // Talks to the YouTube iframe via postMessage (requires enablejsapi=1 in the src)
+            video.contentWindow.postMessage(
+                JSON.stringify({
+                    event: 'command',
+                    func: muted ? 'mute' : 'unMute',
+                    args: []
+                }),
+                '*'
+            );
+
+            soundBtn.querySelector('.sound-icon').textContent = muted ? '🔇' : '🔊';
+            soundBtn.setAttribute('aria-label', muted ? 'Unmute video' : 'Mute video');
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initVideoFeature);
+
