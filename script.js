@@ -362,139 +362,89 @@ document.addEventListener('DOMContentLoaded', initBookPromo);
 
 
 // ===============================
-// Video Carousel Section
-// REPLACES the earlier "Video Feature Section" JS block.
-// Append this to the end of script.js instead.
+// Video Gallery Section
+// REPLACES the entire "Video Carousel Section" JS block.
+// Delete that block (the `videos` array, renderVideoCarousel,
+// goToVideoSlide, toggleSlideSound, initVideoCarousel, and its
+// DOMContentLoaded listener) and append this instead, at the end
+// of script.js.
 // ===============================
 
-// 12. Video Carousel — 7 videos, one plays at a time
+// 12. Video Gallery — grid of 7 videos, click to play in a modal
 const videos = [
-    { id: "SMwh1nIqw8k", caption: "[ Caption for video 1 ]" },
-    { id: "TjqrualxgkI", caption: "[ Caption for video 2 ]" },
-    { id: "5F1pcSljraU", caption: "[ Caption for video 3 ]" },
-    { id: "YOUR_VIDEO_ID_4", caption: "[ Caption for video 4 ]" },
-    { id: "YOUR_VIDEO_ID_5", caption: "[ Caption for video 5 ]" },
-    { id: "YOUR_VIDEO_ID_6", caption: "[ Caption for video 6 ]" },
-    { id: "YOUR_VIDEO_ID_7", caption: "[ Caption for video 7 ]" }
+    { id: "SMwh1nIqw8k", title: "[ Video 1 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "TjqrualxgkI", title: "[ Video 2 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "5F1pcSljraU", title: "[ Video 3 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "YOUR_VIDEO_ID_4", title: "[ Video 4 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "YOUR_VIDEO_ID_5", title: "[ Video 5 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "YOUR_VIDEO_ID_6", title: "[ Video 6 Title ]", review: "“[ Insert a real review or reaction quote here ]”" },
+    { id: "YOUR_VIDEO_ID_7", title: "[ Video 7 Title ]", review: "“[ Insert a real review or reaction quote here ]”" }
 ];
 
-let currentVideoIndex = 0;
-const slideMuteState = {}; // tracks mute state per slide index
+function renderVideoGrid() {
+    const grid = document.getElementById('video-grid');
+    if (!grid) return;
 
-function buildEmbedSrc(videoId) {
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&rel=0&modestbranding=1&enablejsapi=1`;
-}
-
-function renderVideoCarousel() {
-    const track = document.getElementById('video-carousel-track');
-    const dotsContainer = document.getElementById('carousel-dots');
-    if (!track || !dotsContainer) return;
-
-    track.innerHTML = videos.map((video, i) => `
-        <div class="video-slide" data-index="${i}">
-            <div class="video-frame">
-                <iframe
-                    class="video-embed-iframe"
-                    id="video-embed-${i}"
-                    data-video-id="${video.id}"
-                    title="Young Desert video ${i + 1}"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-                <button class="video-sound-toggle" data-index="${i}" aria-label="Unmute video">
-                    <span class="sound-icon">🔇</span>
-                </button>
+    grid.innerHTML = videos.map((video, i) => `
+        <div class="video-card" data-index="${i}">
+            <div class="video-thumb-frame">
+                <img
+                    class="video-thumb-img"
+                    src="https://img.youtube.com/vi/${video.id}/hqdefault.jpg"
+                    alt="${video.title}"
+                    loading="lazy">
+                <span class="play-icon">▶</span>
             </div>
-            <p class="video-slide-caption">${video.caption}</p>
+            <h3 class="video-card-title">${video.title}</h3>
+            <p class="video-review">${video.review}</p>
         </div>
     `).join('');
 
-    dotsContainer.innerHTML = videos.map((_, i) => `
-        <button class="carousel-dot${i === 0 ? ' active' : ''}" data-index="${i}" aria-label="Go to video ${i + 1}"></button>
-    `).join('');
-
-    videos.forEach((_, i) => { slideMuteState[i] = true; });
-
-    // Wire up sound toggle buttons (event delegation)
-    track.addEventListener('click', (e) => {
-        const btn = e.target.closest('.video-sound-toggle');
-        if (!btn) return;
-        toggleSlideSound(parseInt(btn.dataset.index));
+    grid.addEventListener('click', (e) => {
+        const card = e.target.closest('.video-card');
+        if (!card) return;
+        openVideoModal(parseInt(card.dataset.index));
     });
-
-    // Wire up dot navigation
-    dotsContainer.addEventListener('click', (e) => {
-        const dot = e.target.closest('.carousel-dot');
-        if (!dot) return;
-        goToVideoSlide(parseInt(dot.dataset.index));
-    });
-
-    goToVideoSlide(0); // loads and plays the first video
 }
 
-function goToVideoSlide(index) {
-    const track = document.getElementById('video-carousel-track');
-    const dots = document.querySelectorAll('.carousel-dot');
-    if (!track) return;
+function openVideoModal(index) {
+    const video = videos[index];
+    const overlay = document.getElementById('video-modal-overlay');
+    const iframe = document.getElementById('video-modal-iframe');
+    const titleEl = document.getElementById('video-modal-title');
+    const reviewEl = document.getElementById('video-modal-review');
 
-    // Wrap around for infinite navigation
-    if (index < 0) index = videos.length - 1;
-    if (index >= videos.length) index = 0;
+    if (!overlay || !iframe) return;
 
-    // Stop the previously active video by clearing its iframe src
-    const prevIframe = document.getElementById(`video-embed-${currentVideoIndex}`);
-    if (prevIframe) prevIframe.src = '';
+    // Autoplay WITH sound is allowed here because opening the modal
+    // is a direct result of the user's click (a "user gesture").
+    iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`;
+    titleEl.textContent = video.title;
+    reviewEl.textContent = video.review;
 
-    currentVideoIndex = index;
-    slideMuteState[index] = true; // new video always starts muted (browser requirement)
-
-    // Load and autoplay the new active video
-    const activeIframe = document.getElementById(`video-embed-${index}`);
-    if (activeIframe) {
-        activeIframe.src = buildEmbedSrc(activeIframe.dataset.videoId);
-    }
-
-    // Reset that slide's sound icon back to muted
-    const activeToggle = document.querySelector(`.video-sound-toggle[data-index="${index}"] .sound-icon`);
-    if (activeToggle) activeToggle.textContent = '🔇';
-
-    // Slide the track
-    track.style.transform = `translateX(-${index * 100}%)`;
-
-    // Update dots
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    overlay.classList.add('active');
+    document.body.classList.add('modal-open');
 }
 
-function toggleSlideSound(index) {
-    const iframe = document.getElementById(`video-embed-${index}`);
-    const icon = document.querySelector(`.video-sound-toggle[data-index="${index}"] .sound-icon`);
-    if (!iframe) return;
+function closeVideoModal() {
+    const overlay = document.getElementById('video-modal-overlay');
+    const iframe = document.getElementById('video-modal-iframe');
 
-    const muted = !slideMuteState[index];
-    slideMuteState[index] = muted;
+    if (!overlay || !iframe) return;
 
-    iframe.contentWindow.postMessage(
-        JSON.stringify({
-            event: 'command',
-            func: muted ? 'mute' : 'unMute',
-            args: []
-        }),
-        '*'
-    );
-
-    if (icon) icon.textContent = muted ? '🔇' : '🔊';
+    overlay.classList.remove('active');
+    document.body.classList.remove('modal-open');
+    iframe.src = ''; // stops playback
 }
 
-function initVideoCarousel() {
+function initVideoGallery() {
     const section = document.querySelector('.video-feature');
-    const prevBtn = document.getElementById('carousel-prev');
-    const nextBtn = document.getElementById('carousel-next');
-    const carousel = document.querySelector('.video-carousel');
+    const overlay = document.getElementById('video-modal-overlay');
+    const closeBtn = document.getElementById('close-video-modal');
 
     if (!section) return;
 
-    renderVideoCarousel();
+    renderVideoGrid();
 
     // Scroll reveal (same pattern used elsewhere on the site)
     const observer = new IntersectionObserver((entries) => {
@@ -507,27 +457,18 @@ function initVideoCarousel() {
     }, { threshold: 0.2 });
     observer.observe(section);
 
-    if (prevBtn) prevBtn.addEventListener('click', () => goToVideoSlide(currentVideoIndex - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goToVideoSlide(currentVideoIndex + 1));
+    if (closeBtn) closeBtn.addEventListener('click', closeVideoModal);
 
-    // Swipe support for mobile
-    if (carousel) {
-        let touchStartX = 0;
-
-        carousel.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        carousel.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const delta = touchEndX - touchStartX;
-
-            if (Math.abs(delta) > 50) { // ignore small accidental swipes
-                if (delta < 0) goToVideoSlide(currentVideoIndex + 1); // swipe left -> next
-                else goToVideoSlide(currentVideoIndex - 1); // swipe right -> prev
-            }
-        }, { passive: true });
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeVideoModal();
+        });
     }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeVideoModal();
+    });
 }
 
-document.addEventListener('DOMContentLoaded', initVideoCarousel);
+document.addEventListener('DOMContentLoaded', initVideoGallery);
