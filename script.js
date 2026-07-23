@@ -29,7 +29,7 @@ function toggleCart() {
     }
 }
 
-// 5. Render Grid (Home Page)
+// 5. Render Grid (Home Page) <p style="font-weight: bold;">$${product.price.toFixed(2)}</p> 
 function renderProducts() {
     if(!container) return;
     container.innerHTML = products.map(product => `
@@ -39,7 +39,7 @@ function renderProducts() {
             </a>
             <h3>${product.name}</h3>
             <p class="verse-highlight">${product.verse}</p>
-            <p style="font-weight: bold;">$${product.price.toFixed(2)}</p>
+        
             <a href="product.html?id=${product.id}" class="btn" style="margin-top: 15px; padding: 0.6rem 1rem; font-size: 0.8rem;">View Details</a>
         </div>
     `).join('');
