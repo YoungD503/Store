@@ -86,35 +86,44 @@
 </section>
 
 
-  <!--
-  VIDEO CAROUSEL SECTION
-  This REPLACES the earlier single "video-feature" section/files.
+<!--
+  VIDEO GALLERY SECTION
+  This REPLACES the entire video-carousel section from before.
+  Delete the old <section class="video-feature" id="watch">...carousel...</section>
+  block and use this instead. Paste inside <main>.
 
-  Paste this inside <main>, wherever you want the carousel to appear.
-  The slides themselves are rendered by JS (see video-carousel-script.js) —
-  edit the `videos` array at the top of that file to set your 7 real
-  YouTube video IDs and captions.
+  The 7 cards + the modal are rendered/controlled by JS
+  (see video-gallery-script.js) — edit the `videos` array there
+  to set real YouTube IDs, titles, and reviews.
 -->
 <section class="video-feature" id="watch">
     <div class="video-feature-inner">
         <span class="brand-subtext">Watch</span>
-        <h2 class="video-title">Young Desert — The Story in Motion</h2>
+        <h2 class="video-title">Young Desert — In Motion</h2>
 
-        <div class="video-carousel">
-            <div class="video-carousel-track" id="video-carousel-track">
-                <!-- Slides injected here by JS -->
-            </div>
-
-            <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Previous video">&#8249;</button>
-            <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Next video">&#8250;</button>
-        </div>
-
-        <div class="carousel-dots" id="carousel-dots">
-            <!-- Dots injected here by JS -->
+        <div class="video-grid" id="video-grid">
+            <!-- Cards injected here by JS -->
         </div>
     </div>
 </section>
-        
+
+<!-- Video Modal (plays the chosen video with sound, on click) -->
+<div class="video-modal-overlay" id="video-modal-overlay">
+    <div class="video-modal">
+        <button class="close-modal" id="close-video-modal">&times;</button>
+        <div class="video-modal-frame">
+            <iframe
+                id="video-modal-iframe"
+                title="Young Desert video"
+                frameborder="0"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+        <p class="video-modal-title" id="video-modal-title"></p>
+        <p class="video-modal-review" id="video-modal-review"></p>
+    </div>
+</div>
         
     </main>
 
