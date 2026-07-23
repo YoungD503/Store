@@ -361,22 +361,142 @@ document.addEventListener('DOMContentLoaded', initBookPromo);
 
 
 
-
-
 // ===============================
-// Video Feature Section
-// Append this to the end of script.js (after the book promo block)
+// Video Carousel Section
+// REPLACES the earlier "Video Feature Section" JS block.
+// Append this to the end of script.js instead.
 // ===============================
 
-// 12. Video Feature — scroll reveal + sound toggle
-function initVideoFeature() {
+// 12. Video Carousel — 7 videos, one plays at a time
+const videos = [
+    { id: "SMwh1nIqw8k", caption: "[ Caption for video 1 ]" },
+    { id: "TjqrualxgkI", caption: "[ Caption for video 2 ]" },
+    { id: "5F1pcSljraU", caption: "[ Caption for video 3 ]" },
+    { id: "YOUR_VIDEO_ID_4", caption: "[ Caption for video 4 ]" },
+    { id: "YOUR_VIDEO_ID_5", caption: "[ Caption for video 5 ]" },
+    { id: "YOUR_VIDEO_ID_6", caption: "[ Caption for video 6 ]" },
+    { id: "YOUR_VIDEO_ID_7", caption: "[ Caption for video 7 ]" }
+];
+
+let currentVideoIndex = 0;
+const slideMuteState = {}; // tracks mute state per slide index
+
+function buildEmbedSrc(videoId) {
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&rel=0&modestbranding=1&enablejsapi=1`;
+}
+
+function renderVideoCarousel() {
+    const track = document.getElementById('video-carousel-track');
+    const dotsContainer = document.getElementById('carousel-dots');
+    if (!track || !dotsContainer) return;
+
+    track.innerHTML = videos.map((video, i) => `
+        <div class="video-slide" data-index="${i}">
+            <div class="video-frame">
+                <iframe
+                    class="video-embed-iframe"
+                    id="video-embed-${i}"
+                    data-video-id="${video.id}"
+                    title="Young Desert video ${i + 1}"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+                <button class="video-sound-toggle" data-index="${i}" aria-label="Unmute video">
+                    <span class="sound-icon">🔇</span>
+                </button>
+            </div>
+            <p class="video-slide-caption">${video.caption}</p>
+        </div>
+    `).join('');
+
+    dotsContainer.innerHTML = videos.map((_, i) => `
+        <button class="carousel-dot${i === 0 ? ' active' : ''}" data-index="${i}" aria-label="Go to video ${i + 1}"></button>
+    `).join('');
+
+    videos.forEach((_, i) => { slideMuteState[i] = true; });
+
+    // Wire up sound toggle buttons (event delegation)
+    track.addEventListener('click', (e) => {
+        const btn = e.target.closest('.video-sound-toggle');
+        if (!btn) return;
+        toggleSlideSound(parseInt(btn.dataset.index));
+    });
+
+    // Wire up dot navigation
+    dotsContainer.addEventListener('click', (e) => {
+        const dot = e.target.closest('.carousel-dot');
+        if (!dot) return;
+        goToVideoSlide(parseInt(dot.dataset.index));
+    });
+
+    goToVideoSlide(0); // loads and plays the first video
+}
+
+function goToVideoSlide(index) {
+    const track = document.getElementById('video-carousel-track');
+    const dots = document.querySelectorAll('.carousel-dot');
+    if (!track) return;
+
+    // Wrap around for infinite navigation
+    if (index < 0) index = videos.length - 1;
+    if (index >= videos.length) index = 0;
+
+    // Stop the previously active video by clearing its iframe src
+    const prevIframe = document.getElementById(`video-embed-${currentVideoIndex}`);
+    if (prevIframe) prevIframe.src = '';
+
+    currentVideoIndex = index;
+    slideMuteState[index] = true; // new video always starts muted (browser requirement)
+
+    // Load and autoplay the new active video
+    const activeIframe = document.getElementById(`video-embed-${index}`);
+    if (activeIframe) {
+        activeIframe.src = buildEmbedSrc(activeIframe.dataset.videoId);
+    }
+
+    // Reset that slide's sound icon back to muted
+    const activeToggle = document.querySelector(`.video-sound-toggle[data-index="${index}"] .sound-icon`);
+    if (activeToggle) activeToggle.textContent = '🔇';
+
+    // Slide the track
+    track.style.transform = `translateX(-${index * 100}%)`;
+
+    // Update dots
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+}
+
+function toggleSlideSound(index) {
+    const iframe = document.getElementById(`video-embed-${index}`);
+    const icon = document.querySelector(`.video-sound-toggle[data-index="${index}"] .sound-icon`);
+    if (!iframe) return;
+
+    const muted = !slideMuteState[index];
+    slideMuteState[index] = muted;
+
+    iframe.contentWindow.postMessage(
+        JSON.stringify({
+            event: 'command',
+            func: muted ? 'mute' : 'unMute',
+            args: []
+        }),
+        '*'
+    );
+
+    if (icon) icon.textContent = muted ? '🔇' : '🔊';
+}
+
+function initVideoCarousel() {
     const section = document.querySelector('.video-feature');
-    const video = document.getElementById('brand-video');
-    const soundBtn = document.getElementById('video-sound-toggle');
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+    const carousel = document.querySelector('.video-carousel');
 
     if (!section) return;
 
-    // Reveal the section once when it scrolls into view
+    renderVideoCarousel();
+
+    // Scroll reveal (same pattern used elsewhere on the site)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -385,30 +505,29 @@ function initVideoFeature() {
             }
         });
     }, { threshold: 0.2 });
-
     observer.observe(section);
 
-    if (video && soundBtn) {
-        let muted = true;
+    if (prevBtn) prevBtn.addEventListener('click', () => goToVideoSlide(currentVideoIndex - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToVideoSlide(currentVideoIndex + 1));
 
-        soundBtn.addEventListener('click', () => {
-            muted = !muted;
+    // Swipe support for mobile
+    if (carousel) {
+        let touchStartX = 0;
 
-            // Talks to the YouTube iframe via postMessage (requires enablejsapi=1 in the src)
-            video.contentWindow.postMessage(
-                JSON.stringify({
-                    event: 'command',
-                    func: muted ? 'mute' : 'unMute',
-                    args: []
-                }),
-                '*'
-            );
+        carousel.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
 
-            soundBtn.querySelector('.sound-icon').textContent = muted ? '🔇' : '🔊';
-            soundBtn.setAttribute('aria-label', muted ? 'Unmute video' : 'Mute video');
-        });
+        carousel.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const delta = touchEndX - touchStartX;
+
+            if (Math.abs(delta) > 50) { // ignore small accidental swipes
+                if (delta < 0) goToVideoSlide(currentVideoIndex + 1); // swipe left -> next
+                else goToVideoSlide(currentVideoIndex - 1); // swipe right -> prev
+            }
+        }, { passive: true });
     }
 }
 
-document.addEventListener('DOMContentLoaded', initVideoFeature);
-
+document.addEventListener('DOMContentLoaded', initVideoCarousel);
